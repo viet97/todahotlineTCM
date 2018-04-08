@@ -33,7 +33,7 @@ public class FirebaseIdService extends FirebaseInstanceIdService {
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
         android.util.Log.i("FirebaseIdService", "[Push Notification] Refreshed token: " + refreshedToken);
 
-        sendRegistrationToServer(refreshedToken);
+//        sendRegistrationToServer(refreshedToken);
     }
 
     private void sendRegistrationToServer(final String refreshedToken) {

@@ -58,6 +58,7 @@ public class LinphoneLauncherActivity extends Activity {
 	private ServiceWaitThread mServiceThread;
 	private String addressToCall;
 	private Uri uriToResolve;
+    private String TAG = "LinphoneLauncher";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -111,7 +112,8 @@ public class LinphoneLauncherActivity extends Activity {
 							onServiceReady();
 						} catch (Exception e) {
 							android.util.Log.d("LinphoneLaunched", "onResponse: "+e.toString());
-						}
+                            finish();
+                        }
 					}
 				}
 
@@ -120,8 +122,12 @@ public class LinphoneLauncherActivity extends Activity {
 					Toast.makeText(LinphoneLauncherActivity.this,
 							"Không có kết nối internet,vui lòng bật wifi hoặc 3g",
 							Toast.LENGTH_SHORT).show();
-
-				}
+                    try {
+                        LinphoneLauncherActivity.this.finish();
+                    } catch (Exception e) {
+                        Log.d(TAG, "Exception: " + e.toString());
+                    }
+                }
 			});
 
 		} else {
@@ -141,13 +147,14 @@ public class LinphoneLauncherActivity extends Activity {
 							DbContext.getInstance().setDsCongty(dsCongTyResponse,LinphoneLauncherActivity.this);
 							NetContext.getInstance().setBASE_URL(dsCongTyResponse.getDscongty().get(0).getBaseURL());
 							startService(new Intent(ACTION_MAIN).setClass(LinphoneLauncherActivity.this, LinphoneService.class));
-//            Intent startService = new Intent("com.example.helloandroid.alarms");
-//            sendBroadcast(startService);
-							mServiceThread = new ServiceWaitThread();
+//							Intent startService = new Intent("com.example.helloandroid.alarms");
+//							sendBroadcast(startService);
+                            mServiceThread = new ServiceWaitThread();
 							mServiceThread.start();
 						} catch (Exception e) {
 							android.util.Log.d("LinphoneLaunched", "onResponse: "+e.toString());
-						}
+                            finish();
+                        }
 					}
 				}
 
@@ -156,8 +163,12 @@ public class LinphoneLauncherActivity extends Activity {
 					Toast.makeText(LinphoneLauncherActivity.this,
 							"Không có kết nối internet,vui lòng bật wifi hoặc 3g",
 							Toast.LENGTH_SHORT).show();
-
-				}
+                    try {
+                        LinphoneLauncherActivity.this.finish();
+                    } catch (Exception e) {
+                        Log.d(TAG, "Exception: " + e.toString());
+                    }
+                }
 			});
 
 		}

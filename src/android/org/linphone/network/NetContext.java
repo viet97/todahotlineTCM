@@ -70,9 +70,15 @@ public class NetContext {
     }
 
     public void init(Context context) {
-        int positionSelected = context.getSharedPreferences("loginPrefs", context.MODE_PRIVATE).getInt("server",0);
-        String selectedBaseUrl  = DbContext.getInstance().getDsCongTy(context).getDscongty().get(positionSelected).getBaseURL();
-        Log.d(TAG, "init: "+selectedBaseUrl);
+        String selectedBaseUrl = "";
+        try {
+            int positionSelected = context.getSharedPreferences("loginPrefs", context.MODE_PRIVATE).getInt("server", 0);
+            selectedBaseUrl = DbContext.getInstance().getDsCongTy(context).getDscongty().get(positionSelected).getBaseURL();
+
+        } catch (Exception e) {
+            Log.d(TAG, "Exception: " + e.toString());
+            selectedBaseUrl = "http://42.112.31.63:10001/";
+        }
         setBASE_URL(selectedBaseUrl);
         try {
             OkHttpClient client = new OkHttpClient

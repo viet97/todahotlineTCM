@@ -72,6 +72,7 @@ public class CallButton extends ImageView implements OnClickListener, AddressAwa
 				Log.d(TAG, "onClick: 69");
 				if (add.getText().length() > 0) {
 					LinphoneManager.getInstance().newOutgoingCall(add);
+					mAddress.setText("");
 				} else {
 
 					if (LinphonePreferences.instance().isBisFeatureEnabled()) {

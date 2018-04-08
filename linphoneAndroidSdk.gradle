@@ -15,9 +15,9 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
-        if (googleFile.exists()) {
+//        if (googleFile.exists()) {
             classpath 'com.google.gms:google-services:3.1.0'
-        }
+//        }
     }
 }
 

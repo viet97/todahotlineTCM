@@ -84,7 +84,7 @@ public final class LinphoneService extends Service {
     public static final String START_LINPHONE_LOGS = " ==== Phone information dump ====";
     public static final int IC_LEVEL_ORANGE = 0;
     /*private static final int IC_LEVEL_GREEN=1;
-	private static final int IC_LEVEL_RED=2;*/
+    private static final int IC_LEVEL_RED=2;*/
     //public static final int IC_LEVEL_OFFLINE=3;
 
     private static LinphoneService instance;
@@ -308,7 +308,7 @@ public final class LinphoneService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        android.util.Log.d(TAG, "onCreate: ");
+        android.util.Log.d(TAG, "onCreate: " + LinphonePreferences.instance().getAccountCount());
         setupActivityMonitor();
         // In case restart after a crash. Main in LinphoneActivity
         mNotificationTitle = getString(R.string.service_name);
@@ -343,6 +343,7 @@ public final class LinphoneService extends Service {
         try {
             bm = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         } catch (Exception e) {
+
         }
         mNotif = Compatibility.createNotification(this, mNotificationTitle, "Tài khoản chưa đăng nhập", R.drawable.ic_fiber_manual_record_black_124dp, R.mipmap.ic_launcher, bm, mNotifContentIntent, true, notifcationsPriority);
 
@@ -355,7 +356,7 @@ public final class LinphoneService extends Service {
         } catch (ClassNotFoundException e) {
             Log.e(e);
         }
-
+        android.util.Log.d(TAG, "checkService: " + LinphonePreferences.instance().getAccountCount());
         LinphoneManager.getLc().addListener(mListener = new LinphoneCoreListenerBase() {
             @Override
             public void callState(LinphoneCore lc, LinphoneCall call, LinphoneCall.State state, String message) {
@@ -431,10 +432,10 @@ public final class LinphoneService extends Service {
 
                 if (!mDisableRegistrationStatus) {
 
-                        if (displayServiceNotification() && state == RegistrationState.RegistrationOk && LinphoneManager.getLc().getDefaultProxyConfig() != null && LinphoneManager.getLc().getDefaultProxyConfig().isRegistered()) {
-                            android.util.Log.d(TAG, "registrationState: RegistrationOk" + LinphonePreferences.instance().getAccountCount());
-                            sendNotification(IC_LEVEL_ORANGE, R.string.notification_registered);
-                        }
+                    if (displayServiceNotification() && state == RegistrationState.RegistrationOk && LinphoneManager.getLc().getDefaultProxyConfig() != null && LinphoneManager.getLc().getDefaultProxyConfig().isRegistered()) {
+                        android.util.Log.d(TAG, "registrationState: RegistrationOk" + LinphonePreferences.instance().getAccountCount());
+                        sendNotification(IC_LEVEL_ORANGE, R.string.notification_registered);
+                    }
 
                     if (displayServiceNotification() && (state == RegistrationState.RegistrationFailed || state == RegistrationState.RegistrationCleared) && (LinphoneManager.getLc().getDefaultProxyConfig() == null || !LinphoneManager.getLc().getDefaultProxyConfig().isRegistered())) {
                         android.util.Log.d(TAG, "registrationState: RegistrationFailed" + LinphonePreferences.instance().getAccountCount());
@@ -449,8 +450,9 @@ public final class LinphoneService extends Service {
                 }
             }
         });
-
-
+        if (LinphonePreferences.instance().getAccountCount() > 0)
+            LinphonePreferences.instance().setAccountEnabled(0, true);
+        android.util.Log.d(TAG, "checkService: 454");
         try {
             mStartForeground = getClass().getMethod("startForeground", mStartFgSign);
             mStopForeground = getClass().getMethod("stopForeground", mStopFgSign);
@@ -902,7 +904,7 @@ public final class LinphoneService extends Service {
             getApplication().unregisterActivityLifecycleCallbacks(activityCallbacks);
             activityCallbacks = null;
         }
-        LinphonePreferences mPrefs = LinphonePreferences.instance();
+//        LinphonePreferences mPrefs = LinphonePreferences.instance();
 //        if (mPrefs.getAccountCount() > 0) {
 //            int accountNumber = mPrefs.getAccountCount();
 //            while (accountNumber >= 0) {
@@ -924,8 +926,8 @@ public final class LinphoneService extends Service {
         mNM.cancel(INCALL_NOTIF_ID);
         mNM.cancel(MESSAGE_NOTIF_ID);
         mNM.cancelAll();
-        Intent startService = new Intent("com.example.helloandroid.alarms");
-        sendBroadcast(startService);
+//        Intent startService = new Intent("com.example.helloandroid.alarms");
+//        sendBroadcast(startService);
         super.onDestroy();
     }
 

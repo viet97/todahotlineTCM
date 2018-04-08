@@ -378,7 +378,7 @@ public class AssistantActivity extends Activity implements OnClickListener, Acti
                                                         Toast.makeText(AssistantActivity.this, "Đổi mật khẩu thành công , bạn sẽ bị đăng xuất khỏi tài khoản.", Toast.LENGTH_SHORT).show();
 
                                                         Intent intent = new Intent(AssistantActivity.this, LoginActivity.class);
-                                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                                         startActivity(intent);
                                                         android.util.Log.d(TAG, "onResponse: finishActivity");
                                                     }
@@ -445,11 +445,11 @@ public class AssistantActivity extends Activity implements OnClickListener, Acti
 
     public String getURLDoiMk() {
         try {
-            URL = "/AppDoiMatKhau.aspx?idnhanvien=" + DbContext.getInstance().getLoginRespon(this).getData().getIdnhanvien()
+            URL = LoginActivity.TODA + "/AppDoiMatKhau.aspx?idnhanvien=" + DbContext.getInstance().getLoginRespon(this).getData().getIdnhanvien()
                     + "&matkhaucu=" + getMd5Hash(passold)
                     + "&matkhaumoi=" + getMd5Hash(pass);
-            if (!NetContext.getInstance().getBASE_URL().equals("http://" + DEFAULT_BASE + "/"))
-                URL = "/todahotline" + URL;
+//            if (!NetContext.getInstance().getBASE_URL().equals("http://" + DEFAULT_BASE + "/"))
+//                URL = "/todahotline" + URL;
         } catch (Exception e) {
             android.util.Log.d(TAG, "Exception: " + e);
         }

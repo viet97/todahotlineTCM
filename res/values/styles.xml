@@ -17,6 +17,12 @@
 		<item name="android:fastScrollPreviewBackgroundRight">@drawable/fast_scroll_preview</item>
 	</style>
 
+    <style name="CallTheme" parent="android:Theme.Holo.Light.NoActionBar.Fullscreen">
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:fastScrollThumbDrawable">@drawable/fast_scroll</item>
+        <item name="android:fastScrollTextColor">@android:color/white</item>
+        <item name="android:fastScrollPreviewBackgroundRight">@drawable/fast_scroll_preview</item>
+    </style>
 	<style name="font1" parent="@android:style/TextAppearance.Medium">
 		<item name="android:textColor">@color/black</item>
 		<item name="android:textAllCaps">true</item>

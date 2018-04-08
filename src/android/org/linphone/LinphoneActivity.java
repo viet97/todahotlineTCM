@@ -91,6 +91,7 @@ import org.linphone.core.LinphoneCoreListenerBase;
 import org.linphone.core.LinphoneProxyConfig;
 import org.linphone.core.Reason;
 import org.linphone.database.DbContext;
+import org.linphone.firebase.FirebaseMessaging;
 import org.linphone.mediastream.Log;
 import org.linphone.myactivity.LoginActivity;
 import org.linphone.network.NetContext;
@@ -181,15 +182,17 @@ public class LinphoneActivity extends LinphoneGenericActivity implements OnClick
     protected void onCreate(Bundle savedInstanceState) {
         //This must be done before calling super.onCreate().
         super.onCreate(savedInstanceState);
-        android.util.Log.d(TAG, "onCreate: ");
+
+
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().subscribeToTopic("TodaPhone");
         try{
             NetContext.getInstance().init(this);
         }catch (Exception e){
-
+            android.util.Log.d(TAG, "Exception: " + e.toString());
         }
 //
 //        AlarmManager alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-//        Intent intent = new Intent(this, WakeUpServiceReceiver.class);
+//        Intent intent = new Intent(this, StartServiceReceiver.class);
 //        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
 //                intent, PendingIntent.FLAG_UPDATE_CURRENT);
 //        Calendar calendar = Calendar.getInstance();
@@ -198,8 +201,8 @@ public class LinphoneActivity extends LinphoneGenericActivity implements OnClick
 //        alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP,
 //                calendar.getTimeInMillis(), 60000, pendingIntent);
         //2 s lay danh thuc service
-        Intent startService = new Intent("com.example.helloandroid.alarms");
-        sendBroadcast(startService);
+//        Intent startService = new Intent("com.example.helloandroid.alarms");
+//        sendBroadcast(startService);
         // autologin = true tu dong nhap moi lan vao app
         SharedPreferences.Editor autoLoginEditor = getApplicationContext().getSharedPreferences("AutoLogin", MODE_PRIVATE).edit();
         autoLoginEditor.putBoolean("AutoLogin", true);
@@ -250,6 +253,7 @@ public class LinphoneActivity extends LinphoneGenericActivity implements OnClick
 
         initButtons();
         initSideMenu();
+
         try {
             if (DbContext.getInstance().getLoginRespon(this).getData().getDsquyen().get(0).getIdcauhinh() != ONLY_TAKECALL) {
                 dialer.setVisibility(View.GONE);
@@ -1393,6 +1397,7 @@ public class LinphoneActivity extends LinphoneGenericActivity implements OnClick
     protected void onStart() {
         super.onStart();
         ArrayList<String> permissionsList = new ArrayList<String>();
+        int recordAudio = getPackageManager().checkPermission(Manifest.permission.RECORD_AUDIO, getPackageName());
 
         int contacts = getPackageManager().checkPermission(Manifest.permission.READ_CONTACTS, getPackageName());
         Log.i("[Permission] Contacts permission is " + (contacts == PackageManager.PERMISSION_GRANTED ? "granted" : "denied"));
@@ -1404,6 +1409,13 @@ public class LinphoneActivity extends LinphoneGenericActivity implements OnClick
         Log.i("[Permission] Read external storage for ring tone permission is " + (ringtone == PackageManager.PERMISSION_GRANTED ? "granted" : "denied"));
         int writeContact = getPackageManager().checkPermission(Manifest.permission.WRITE_CONTACTS, getPackageName());
         Log.i("[Permission] Read external storage for ring tone permission is " + (ringtone == PackageManager.PERMISSION_GRANTED ? "granted" : "denied"));
+
+        if (recordAudio != PackageManager.PERMISSION_GRANTED) {
+            if (LinphonePreferences.instance().firstTimeAskingForPermission(Manifest.permission.RECORD_AUDIO) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
+                Log.i("[Permission] Asking for record audio");
+                permissionsList.add(Manifest.permission.RECORD_AUDIO);
+            }
+        }
 
         if (ringtone != PackageManager.PERMISSION_GRANTED) {
             if (LinphonePreferences.instance().firstTimeAskingForPermission(Manifest.permission.READ_EXTERNAL_STORAGE) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
@@ -1456,6 +1468,7 @@ public class LinphoneActivity extends LinphoneGenericActivity implements OnClick
     @Override
     protected void onResume() {
         super.onResume();
+        NetContext.instance.init(LinphoneActivity.this);
         // autologin = true tu dong nhap moi lan vao app
         SharedPreferences.Editor autoLoginEditor = getApplicationContext().getSharedPreferences("AutoLogin", MODE_PRIVATE).edit();
         autoLoginEditor.putBoolean("AutoLogin", true);
@@ -1731,10 +1744,10 @@ public class LinphoneActivity extends LinphoneGenericActivity implements OnClick
                 databasePref.clear();
                 databasePref.commit();
 //					stopService(new Intent(Intent.ACTION_MAIN).setClass(LinphoneActivity.this, LinphoneService.class));
-//					Intent intent = new Intent(LinphoneActivity.this, LoginActivity.class);
+                Intent intent = new Intent(LinphoneActivity.this, LoginActivity.class);
 //					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//					startActivity(intent);
-                quit();
+                startActivity(intent);
+//                quit();
             }
         });
     }
@@ -1946,8 +1959,8 @@ public class LinphoneActivity extends LinphoneGenericActivity implements OnClick
                         dialogLogin.cancel();
 					stopService(new Intent(Intent.ACTION_MAIN).setClass(LinphoneActivity.this, LinphoneService.class));
 					Intent intent = new Intent(LinphoneActivity.this, LoginActivity.class);
-					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					startActivity(intent);
+//					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
 //                        quit();
 
                     } catch (Exception e) {
